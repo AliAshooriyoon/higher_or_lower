@@ -490,49 +490,63 @@ data = [
 
 def runGame():
     contextPersons = [random.choice(data), random.choice(data)]
-    person1 = contextPersons[0]
-    person2 = contextPersons[1]
     correctAnswer = []
+    stop = False
 
-    def doStop(status):
-        return status
-
-    def calc_Answer(selector, caller):
-        if selector == "B":
-            if person2["folowwer"] > person1["folowwer"]:
-                print("toll!")
-                caller(False)
-                correctAnswer.insert(0, person2)
-            elif person2["folowwer"] < person1["folowwer"]:
-                print("schlimm")
-                caller(True)
-            elif selector == "A":
-                if person1["folowwer"] > person2["folowwer"]:
-                    print("toll!")
-                    caller(False)
-                    correctAnswer.insert(0, person1)
-                elif person1["folowwer"] < person2["folowwer"]:
-                    print("schlimm")
-                    caller(True)
+    def doStop():
+        return True
 
     # print(contextPersons[0])
-    def doQuestion(stat):
-        while not stat:
-            if correctAnswer != []:
-                contextPersons[0] = correctAnswer[0]
-            contextPersons[1] = random.choice(data)
+    def doQuestion():
+        print("Do Question \n")
+        contextPersons[1] = random.choice(data)
         while contextPersons[1] == contextPersons[0]:
+            print("While the Same")
             contextPersons[1] = random.choice(data)
+        person1 = contextPersons[0]
+        person2 = contextPersons[1]
 
-        usrAnswer = input(
+        return input(
             f"Welche hat hohere Folger \n A : {person1['name']} \n B: {person2['name']}  ? \n"
         )
 
-        calc_Answer(usrAnswer, doQuestion(doStop(True)))
+    # ----------------------------------------------------------
+    # ----------------------------------------------------------
+    # selector = doQuestion()
+    while stop == False:
+        person1 = contextPersons[0]
+        person2 = contextPersons[1]
 
-    # ----------------------------------------------------------
-    # ----------------------------------------------------------
-    doQuestion(doStop(True))
+        def selectorFunc():
+            if correctAnswer != []:
+                return doQuestion()
+            else:
+                # print("In Selector \n")
+                return input(
+                    f"Welche hat hohere Folger \n A : {person1['name']} \n B: {person2['name']}  ? \n"
+                )
+
+        # if correctAnswer != []:
+        # contextPersons[0] = correctAnswer[0]
+        selector = selectorFunc()
+        if selector == "B":
+            # print("if B \n")
+            if person2["folowwer"] > person1["folowwer"]:
+                print("Korrekt!")
+                correctAnswer.insert(0, person2)
+                contextPersons[0] = correctAnswer[0]
+            elif person2["folowwer"] < person1["folowwer"]:
+                print("Inkorrekt!")
+                stop = doStop()
+        elif selector == "A":
+            # print("if A \n")
+            if person1["folowwer"] > person2["folowwer"]:
+                print("Korrekt!")
+                correctAnswer.insert(0, person1)
+                contextPersons[0] = correctAnswer[0]
+            elif person1["folowwer"] < person2["folowwer"]:
+                print("Inkorekkt")
+                stop = doStop()
 
 
 runGame()
